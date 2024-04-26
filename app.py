@@ -1,6 +1,15 @@
-import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.graph_objects as go
+import altair as alt
 import plotly.express as px
+import scipy.stats as stats
+import statsmodels.api as sm
+import numpy as np
+import streamlit as st
+import datetime
+
 
 df = pd.read_csv('vehicles_us.csv')
 
