@@ -1,311 +1,116 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import datetime
 
 
 df = pd.read_csv('vehicles_us.csv')
 
-st.header('My Web Application Dashboard')
+st.header('Vehicles US -  Data Visualization Web Page')
+st.subheader("Welcome to my first Github Project ")
+
+
+df= df.dropna()
+
+df = df.fillna(0)
+
+df['price'] = df['price'].astype('float')
+
+# Age new column
+
+# working code
+
+current_year = datetime.datetime.now().year
+df['age'] = current_year - df['model_year']
+
+# Price Range new column
+
+# working code
+
+def price_range(price):
+    if price < 10000:
+        return 'Low'
+    elif price < 30000:
+        return 'Medium'
+    else:
+        return 'High'
+
+df['price_range'] = df['price'].apply(price_range)
+
+
+# Mileage Group new column
+
+# working code
+
+def mileage_group(odometer):
+    if odometer < 50000:
+        return 'Low'
+    elif odometer < 100000:
+        return 'Medium'
+    else:
+        return 'High'
+
+df['mileage_group'] = df['odometer'].apply(mileage_group)
+
+
+
+# Engine Size Category new column
+
+# working code
+
+def engine_size_category(cylinders):
+    if cylinders < 4.0:
+        return 'Small'
+    elif cylinders < 6.0:
+        return 'Medium'
+    else:
+        return 'Large'
+
+df['engine_size_category'] = df['cylinders'].apply(engine_size_category)
+
+
+### Data Visualization
+
+
 
 # Number of Vehicles for each Cylinder
-# working code
-
-# Histogram using st.write
-st.header("Histogram of cylinders using st.write")
-fig = px.histogram(df, x='cylinders', title='Number of Vehicles for each Cylinder')
-st.write(fig)
-
-fig.show()
-
-# Number of Vehicles for each Type
-# working code
-
-# Histogram of Engine Cylinders
-fig = px.histogram(df, x='type', title='Number of Vehicles for each Type')
+fig = px.histogram(df, x='cylinders', title='Number of Vehicles for each Vehicle Cylinder')
 st.plotly_chart(fig)
 
-fig.show()
+st.text("As seen in the above histogram, Vehicle with 6 cyclinders have the highest amount with a total of 13.264k, while there is only one 12 cylinder vehicle.")
+
+
+# Number of Vehicles for each Type
+fig = px.histogram(df, x='type', title='Number of Vehicles for each Vehicle Type')
+st.plotly_chart(fig)
+
+st.text("We can observe from the above histogram that the highest number of vehicles are SUVs with 10.511k and the least are buses with 23.")
 
 
 # Vehicle Age vs Vehicle Mileage Group
-# working code
 
-# Scatter plot using st.write
-st.header("Age vs. Mileage Group")
 fig = px.scatter(df, x='age', y='mileage_group', title="Vehicle Age vs Vehicle Mileage Group")
-st.write(fig)
+st.plotly_chart(fig)
 
-fig.show()
+st.text("The above Scattered histogram shows the distribution of Vehicle Age between Mileage Groups. For instance, low mileage group tend to live longer than groups. One example of a vehicle aged 88 years with low mileage.")
+
 
 # Engine Size Category vs Vehicle Age
-# working code
 
-# Scatter plot using st.plotly_chart
-st.header("Engine Size Category vs Vehicle Age")
 fig = px.scatter(df, x='engine_size_category', y='age', title="Engine Size Category vs Vehicle Age")
 st.plotly_chart(fig)
+st.text("This Plotly Express histogram shows how vehicle with large engine size tend to live longer than others. One example is a vehicle aged 116 have a Large engine.")
 
-fig.show()
 
 # Scatter Plot of Fuel Type Category vs. Age
+
 # working code
 
 # Scatter plot using st.plotly_chart
-st.header("Scatter Plot of Fuel Type Category vs. Age")
-fig = px.scatter(df, x='fuel', y='age', title="Scatter Plot of Fuel Type Category vs. Age")
 
-# Enable/disable regression line
-show_regression_line = st.checkbox("Show Regression Line")
+fig = px.scatter(df, x='fuel', y='age', title="Scatter Plot of Fuel Type Category vs. Vehicle Age")
 
-if show_regression_line:
-    fig.add_trace(
-        go.Scatter(
-            x=df['fuel'],
-            y=df['age'],
-            mode='markers',
-            marker=dict(color='rgba(0, 0, 0, 0.3)'),
-        )
-    )
-    fig.add_trace(
-        go.Scatter(
-            x=df['fuel'],
-            y=np.polyval(np.polyfit(df['fuel'], df['age'], 1), df['fuel']),
-            mode='lines',
-            line=dict(color='red'),
-        )
-    )
 
 st.plotly_chart(fig)
-fig.show()
 
-# Histogram of price
-fig = px.histogram(df, x='price', nbins=50, title='Distribution of Price of All Vehicles')
-fig.show()
-
-# Histogram of odometer
-fig = px.histogram(df, x='odometer', nbins=50, title='Distribution of Mileage of All Vehicles')
-fig.show()
-
-# Scatterplot of price vs. mileage
-fig = px.scatter(df, x='odometer', y='price', title='Price vs. Mileage')
-fig.show()
-
-# Scatterplot of Vehicle Price vs. age
-fig = px.scatter(df, x='age', y='price', title='Vehicle Price vs. Age')
-fig.show()
-
-# Scatterplot Vehicle Price vs. Mileage by Model
-fig = px.scatter(df, x='odometer', y='price', color='model', labels={'mileage': 'Mileage (miles)', 'price': 'Price (USD)'}, title='Vehicle Price vs. Mileage by Model')
-fig.show()
-
-# Box plot of price distribution by model popularity category
-box_fig = px.box(
-    df,
-    x='model_popularity_category',
-    y='price',
-    title='Price Distribution by Model Popularity Category',
-    labels={'model_popularity_category': 'Model Popularity Category', 'price': 'Price'}
-)
-box_fig.show()
-
-# Histogram of Vehicle Age Distribution
-hist_fig = px.histogram(
-    df,
-    x='age',
-    nbins=20,
-    title='Distribution of Vehicle Age',
-    labels={'age': 'Vehicle Age'}
-)
-hist_fig.show()
-
-# Bar chart of model counts by popularity category
-# Groupping
-model_counts = df.groupby('model_popularity_category').size().reset_index(name='count')
-
-# Create
-bar_fig = go.Figure(data=[go.Bar(
-    x=model_counts['model_popularity_category'],
-    y=model_counts['count'],
-    text=model_counts['count'],
-    textposition='auto',
-    marker=dict(color=px.colors.qualitative.Pastel)
-)])
-
-# Update
-bar_fig.update_layout(
-    title='Model Counts by Popularity Category',
-    xaxis_title='Model Popularity Category',
-    yaxis_title='Number of Vehicles',
-    showlegend=False
-)
-# Show
-bar_fig.show()
-
-# Box plot of mileage by fuel type
-box_fig = px.box(
-    df,
-    x='fuel',
-    y='odometer',
-    title='Mileage Distribution by Fuel Type',
-    labels={'fuel_type': 'Fuel Type', 'mileage': 'Mileage'}
-)
-box_fig.show()
-
-# Sunburst chart of vehicle type, model popularity category, and fuel type
-sunburst_fig = px.sunburst(
-    df,
-    path=['type', 'model_popularity_category', 'fuel'],
-    title='Vehicle Type, Model Popularity, and Fuel Type Distribution',
-    color_discrete_sequence=px.colors.qualitative.Pastel
-)
-sunburst_fig.show()
-
-# Violin plot of price by vehicle condition
-violin_fig = px.violin(
-    df,
-    x='condition',
-    y='price',
-    title='Price Distribution by Vehicle Condition',
-    labels={'condition': 'Vehicle Condition', 'price': 'Price'}
-)
-violin_fig.show()
-
-# Scatter plot of mileage vs. age, colored by model popularity category
-scatter_fig = px.scatter(
-    df,
-    x='age',
-    y='odometer',
-    color='model_popularity_category',
-    title='Mileage vs. Age',
-    labels={'age': 'Vehicle Age', 'mileage': 'Mileage'},
-    hover_data={'model': True, 'model_year': True, 'odometer': True, 'age': True}
-)
-scatter_fig.show()
-
-# Bar Figure for Model Years with Highest Number of Vehicles
-# Filtering
-last_10_years = list(range(current_year - 9, current_year + 1))
-filtered_df = df[df['model_year'].isin(last_10_years)]
-
-# Counting
-model_year_counts = filtered_df['model_year'].value_counts().reset_index()
-model_year_counts.columns = ['Model Year', 'Number of Vehicles']
-
-# Creating Bar Chart
-bar_fig = px.bar(
-    model_year_counts,
-    x='Model Year',
-    y='Number of Vehicles',
-    title=f'Model Years with Highest Number of Vehicles (Last 10 Years)',
-    labels={'Model Year': 'Model Year', 'Number of Vehicles': 'Number of Vehicles'},
-    color='Number of Vehicles',
-    color_continuous_scale=px.colors.sequential.Viridis,
-    text='Number of Vehicles',
-    text_auto='.2s'
-)
-
-# Updating
-bar_fig.update_layout(
-    xaxis_title='Model Year',
-    yaxis_title='Number of Vehicles',
-    xaxis_tickangle=-45,
-    showlegend=False
-)
-# Showing
-bar_fig.show()
-
-# Bar Figure for Average Price by Fuel Type
-# Grouping 
-avg_price_by_fuel = df.groupby('fuel')['price'].mean().reset_index()
-
-# Bar Chart
-fig = go.Figure(data=[go.Bar(
-    x=avg_price_by_fuel['fuel'],
-    y=avg_price_by_fuel['price'],
-    text=avg_price_by_fuel['price'].round(2),
-    textposition='outside',
-    hoverinfo='text',
-    marker=dict(color='steelblue')
-)])
-
-# Updating 
-fig.update_layout(
-    title='Average Price by Fuel Type',
-    xaxis=dict(title='Fuel Type'),
-    yaxis=dict(title='Average Price')
-)
-
-# Showing the plot
-fig.show()
-
-# Pie Chart for Percentage of Vehicles by Trasmission Type
-# Calculation of the percentage of vehicles by transmission type
-transmission_percentage = df['transmission'].value_counts(normalize=True) * 100
-
-# Pie Chart
-fig = go.Figure(data=[go.Pie(
-    labels=transmission_percentage.index,
-    values=transmission_percentage.values,
-    textinfo='label+percent',
-    insidetextorientation='radial',
-    marker=dict(colors=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'])
-)])
-
-# Updating
-fig.update_layout(
-    title='Percentage of Vehicles by Transmission Type',
-    legend=dict(
-        x=0.8,
-        y=0.5,
-        orientation='v'
-    )
-)
-
-# Showing the Plot
-fig.show()
-
-# Bar Plot for Top 5 Vehicle Types
-# Get the top 5 vehicle types
-top_5_types = df['type'].value_counts()
-
-# Bar Plot
-plt.figure(figsize=(10, 6))
-top_5_types.plot(kind='bar', color='skyblue')
-plt.title('Top 5 Vehicle Types')
-plt.xlabel('Vehicle Type')
-plt.ylabel('Number of Vehicles')
-plt.xticks(rotation=45)  # Rotate x-axis labels for better readability
-plt.grid(axis='y', linestyle='--', alpha=0.7)  # Add grid lines for y-axis
-
-# Show Number of Vehicles
-for i, v in enumerate(top_5_types):
-    plt.text(i, v + 5, str(v), ha='center', va='bottom')
-
-plt.tight_layout()  # Adjust layout to prevent clipping of labels
-plt.show()
-
-# Bar Chart for Top 5 Vehicle Models
-# Top 5 vehicle models by count
-top_5_models = df['model'].value_counts().head(5)
-
-# Bar Chart
-fig = go.Figure(go.Bar(
-    x=top_5_models.values,
-    y=top_5_models.index,
-    orientation='h',
-    marker=dict(color='steelblue'),
-    text=top_5_models.values,
-    textposition='outside',
-    hoverinfo='text'
-))
-
-# Update
-fig.update_layout(
-    title='Top 5 Vehicle Models',
-    xaxis=dict(title='Count'),
-    yaxis=dict(title='Model', autorange='reversed'),
-    showlegend=False
-)
-
-# Show
-fig.show()
+st.text("We can interpret from the above scatter plot that vehicle that run on gas tend to live longer than vehicles who run with different kind of fuel. One example is a vehicle aged 116 years that runs on gas.")
