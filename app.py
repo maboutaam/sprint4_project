@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objs as go
 import datetime
 
 
@@ -106,12 +107,31 @@ st.text("This Plotly Express histogram shows how vehicle with large engine size 
 
 # working code
 
-# Create checkbox
+# Create checkbox to show/hide regression line
 show_regression_line = st.checkbox("Show Regression Line")
 
 # Create scatter plot using st.plotly_chart
 st.header("Scatter Plot of Fuel Type Category vs. Age")
-fig = px.scatter(df, x='fuel', y='age', title="Scatter Plot of Fuel Type Category vs. Age", trendline="ols" if show_regression_line else None)
+fig = px.scatter(df, x='fuel', y='age', title="Scatter Plot of Fuel Type Category vs. Age")
+
+# Add regression line if the checkbox is checked
+if show_regression_line:
+    fig.add_trace(
+        go.Scatter(
+            x=df['age'],
+            y=df['fuel'],
+            mode='markers',
+            marker=dict(color='rgba(0, 0, 0, 0.3)'),
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=df['age'],
+            y=np.polyval(np.polyfit(df['age'], df['fuel'], 1), df['age']),
+            mode='lines',
+            line=dict(color='red'),
+        )
+    )
 
 st.plotly_chart(fig)
 
