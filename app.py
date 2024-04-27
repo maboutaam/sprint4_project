@@ -106,14 +106,12 @@ st.text("This Plotly Express histogram shows how vehicle with large engine size 
 
 # working code
 
-# Scatter plot using st.plotly_chart
-
-# Scatter plot using st.plotly_chart
-st.header("Scatter Plot of Fuel Type Category vs. Age")
-fig = px.scatter(df, x='fuel', y='age', title="Scatter Plot of Fuel Type Category vs. Age")
-
-# Show Checkbox
+# Create checkbox
 show_regression_line = st.checkbox("Show Regression Line")
+
+# Create scatter plot using st.plotly_chart
+st.header("Scatter Plot of Fuel Type Category vs. Age")
+fig = px.scatter(df, x='fuel', y='age', title="Scatter Plot of Fuel Type Category vs. Age", trendline="ols" if show_regression_line else None)
 
 st.plotly_chart(fig)
 
