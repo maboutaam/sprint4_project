@@ -108,12 +108,14 @@ st.text("This Plotly Express histogram shows how vehicle with large engine size 
 
 # working code
 
-# Create a checkbox to show/hide additional information
-show_additional_info = st.checkbox("Show the Scatter Plot Figure")
+# Create a checkbox to show/hide the scatter plot
+show_scatter_plot = st.checkbox("Show Scatter Plot")
 
 # Create scatter plot using st.plotly_chart
-st.header("Scatter Plot of Fuel Type Category vs. Age")
-fig = px.scatter(df, x='fuel', y='age', title="Scatter Plot of Fuel Type Category vs. Age")
-st.plotly_chart(fig)
+if show_scatter_plot:
+    fig = px.scatter(df, x='fuel', y='age', title="Scatter Plot of Fuel Type Category vs. Age")
+    st.plotly_chart(fig)
+else:
+    st.write("Scatter plot hidden.")
 
 st.text("We can interpret from the above scatter plot that vehicle that run on gas tend to live longer than vehicles who run with different kind of fuel. One example is a vehicle aged 116 years that runs on gas.")
