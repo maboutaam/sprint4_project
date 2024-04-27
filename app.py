@@ -112,26 +112,8 @@ st.text("This Plotly Express histogram shows how vehicle with large engine size 
 st.header("Scatter Plot of Fuel Type Category vs. Age")
 fig = px.scatter(df, x='fuel', y='age', title="Scatter Plot of Fuel Type Category vs. Age")
 
-# Enable/disable regression line
+# Show Checkbox
 show_regression_line = st.checkbox("Show Regression Line")
-
-if show_regression_line:
-    fig.add_trace(
-        go.Scatter(
-            x=df['fuel'],
-            y=df['age'],
-            mode='markers',
-            marker=dict(color='rgba(0, 0, 0, 0.3)'),
-        )
-    )
-    fig.add_trace(
-        go.Scatter(
-            x=df['fuel'],
-            y=np.polyval(np.polyfit(df['fuel'], df['age'], 1), df['fuel']),
-            mode='lines',
-            line=dict(color='red'),
-        )
-    )
 
 st.plotly_chart(fig)
 
