@@ -108,32 +108,12 @@ st.text("This Plotly Express histogram shows how vehicle with large engine size 
 
 # working code
 
-# Create checkbox to show/hide regression line
-show_regression_line = st.checkbox("Show Regression Line")
+# Create a checkbox to show/hide additional information
+show_additional_info = st.checkbox("Show the Scatter Plot Figure")
 
 # Create scatter plot using st.plotly_chart
 st.header("Scatter Plot of Fuel Type Category vs. Age")
 fig = px.scatter(df, x='fuel', y='age', title="Scatter Plot of Fuel Type Category vs. Age")
-
-# Add regression line if the checkbox is checked
-if show_regression_line:
-    fig.add_trace(
-        go.Scatter(
-            x=df['age'],
-            y=df['fuel'],
-            mode='markers',
-            marker=dict(color='rgba(0, 0, 0, 0.3)'),
-        )
-    )
-    fig.add_trace(
-        go.Scatter(
-            x=df['age'],
-            y=np.polyval(np.polyfit(df['age'], df['fuel'], 1), df['age']),
-            mode='lines',
-            line=dict(color='red'),
-        )
-    )
-
 st.plotly_chart(fig)
 
 st.text("We can interpret from the above scatter plot that vehicle that run on gas tend to live longer than vehicles who run with different kind of fuel. One example is a vehicle aged 116 years that runs on gas.")
