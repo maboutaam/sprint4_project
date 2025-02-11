@@ -1,6 +1,6 @@
 # Sprint 4 Project
 
-Hello and Welcome to my first Github Projct!
+Hello and Welcome to my first Github Project!
 
 Here is the URL to my Web App: https://sprint4-project-2g22.onrender.com
 
